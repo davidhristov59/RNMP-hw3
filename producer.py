@@ -8,7 +8,7 @@ import json
 df = pd.read_csv('data/offline.csv')
 
 producer = KafkaProducer(
-    bootstrap_servers="host.docker.internal:9092",
+    bootstrap_servers="localhost:9092",
     value_serializer=lambda x: json.dumps(x).encode('utf-8')
 )
 
