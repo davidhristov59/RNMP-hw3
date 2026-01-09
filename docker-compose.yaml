@@ -1,19 +1,20 @@
 version: '3.8'
 
 services:
-#  spark:
-#    image: jupyter/pyspark-notebook:spark-3.5.0
-#    container_name: spark-jupyter
-#    ports:
-#      - "8888:8888"
-#      - "4040:4040"
-#    volumes:
-#      - .:/home/jovyan/work
-#    environment:
-#      - GRANT_SUDO=yes
-#    user: root
-#    depends_on:
-#      - kafka
+  spark:
+    image: jupyter/pyspark-notebook:spark-3.5.0
+    platform: linux/amd64 # for AMD64 compatibility
+    container_name: spark-jupyter
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - .:/home/jovyan/work
+    environment:
+      - GRANT_SUDO=yes
+    user: root
+    depends_on:
+      - kafka
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
@@ -31,10 +32,11 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-      - "9093:9093"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:9092,INTERNAL://kafka:29092
+      KAFKA_LISTENERS: EXTERNAL://0.0.0.0:9092,INTERNAL://0.0.0.0:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
